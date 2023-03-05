@@ -1,5 +1,3 @@
-﻿using CourseProject.Codebase.Context;
-using CourseProject.Codebase.InternalProject;
-using Microsoft.EntityFrameworkCore;
+﻿using CourseProject.Codebase.InternalProject;
 
-Project _project = new Project();
+Project project = new Project();

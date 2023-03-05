@@ -13,15 +13,19 @@ public abstract class DatabaseModel<T> where T : class
         return args.TransactionModel;
     }
 
-    public T RemoveRow(int index)
+    public T RemoveRow()
     {
+        int index = Convert.ToInt32(Console.ReadLine());
+        
         EFTransactionArgs<T> args = TryRemoveRow(index - 1);
         LogInfo(args);
         return args.TransactionModel;
     }
 
-    public T UpdateRow(int index)
+    public T UpdateRow()
     {
+        int index = Convert.ToInt32(Console.ReadLine());
+
         EFTransactionArgs<T> args = TryUpdateRow(index - 1);
         LogInfo(args);
         return args.TransactionModel;

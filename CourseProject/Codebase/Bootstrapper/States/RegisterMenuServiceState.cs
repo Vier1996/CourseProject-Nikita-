@@ -1,12 +1,16 @@
 using CourseProject.Codebase.Looper;
 using CourseProject.Codebase.Menu;
+using CourseProject.Codebase.MySql;
 
 namespace CourseProject.Codebase.Bootstrapper.States
 {
     public class RegisterMenuServiceState : BootstrapState
     {
-        public RegisterMenuServiceState(BootstrapPayload payload) : base(payload)
+        private MySqlAgent _agent;
+        
+        public RegisterMenuServiceState(BootstrapPayload payload, MySqlAgent agent) : base(payload)
         {
+            _agent = agent;
         }
         
         public override void Enter(Action onComplete)
@@ -18,59 +22,51 @@ namespace CourseProject.Codebase.Bootstrapper.States
         private void DeclareMenus()
         {
             MenuView parentMenu = new MenuView("Главное меню");
-            MenuView testSubMenu = new MenuView("Вспомогательное меню");
-            
-            parentMenu.AddMenuItem(new MenuItem(1, "Полный отчет", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
+            MenuView testSubMenuG = new MenuView("Меню по группам");
+            MenuView testSubMenuS = new MenuView("Меню по специальности");
+            MenuView testSubMenuF = new MenuView("Меню по форме обучению");
+            MenuView testSubMenuQ = new MenuView("Меню по направлению");
 
-            }));
-            
-            parentMenu.AddMenuItem(new MenuItem(2, "Вывести по направлению", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
+            // Главное меню
+            parentMenu.AddMenuItem(new MenuItem(1, "Меню по группам", () => MenuPresenter.Instance.SetCurrentMenu(testSubMenuG)));
+            parentMenu.AddMenuItem(new MenuItem(2, "Меню по специальности", () => MenuPresenter.Instance.SetCurrentMenu(testSubMenuS)));
+            parentMenu.AddMenuItem(new MenuItem(3, "Меню по форме обучения", () => MenuPresenter.Instance.SetCurrentMenu(testSubMenuF)));
+            parentMenu.AddMenuItem(new MenuItem(4, "Меню по направлению ", () => MenuPresenter.Instance.SetCurrentMenu(testSubMenuQ)));
+            parentMenu.AddMenuItem(new MenuItem(0, "Завершить работу ", () => ProjectLooper.Instance.CancelProjectLoop()));
+            // Конец главного меню
 
-            }));
-            
-            parentMenu.AddMenuItem(new MenuItem(3, "Вывести по колличеству студентов", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
+            // Меню по группам
+            testSubMenuG.AddMenuItem(new MenuItem(1, "Общий список групп", () => _agent.GroupWrappedModel.DisplayInto()));
+            testSubMenuG.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuG.AddMenuItem(new MenuItem(3, "Добавить группу", () => _agent.GroupWrappedModel.AddRow()));
+            testSubMenuG.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.GroupWrappedModel.UpdateRow()));
+            testSubMenuG.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.GroupWrappedModel.RemoveRow()));
+            // Конец меню по группам
 
-            }));
-            
-            parentMenu.AddMenuItem(new MenuItem(4, "Вывеси по названию группы", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
+            // Меню по специальности
+            testSubMenuS.AddMenuItem(new MenuItem(1, "Общий список по специальности", () => _agent.SpecialityWrappedModel.DisplayInto()));
+            testSubMenuS.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuS.AddMenuItem(new MenuItem(3, "Добавить специальность", () => _agent.SpecialityWrappedModel.AddRow()));
+            testSubMenuS.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.SpecialityWrappedModel.UpdateRow()));
+            testSubMenuS.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.SpecialityWrappedModel.RemoveRow()));
+            // Конец меню по специальности
 
-            parentMenu.AddMenuItem(new MenuItem(5, "Редактирование", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
-            
-            parentMenu.AddMenuItem(new MenuItem(6, "Добавление", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
-            
-            parentMenu.AddMenuItem(new MenuItem(7, "Удаление", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
-            
-            parentMenu.AddMenuItem(new MenuItem(0, "Завершить работу.", () => ProjectLooper.Instance.CancelProjectLoop()));
-            
-            testSubMenu.AddMenuItem(new MenuItem(1, "Вывести в лог {ЖОПА}", () => Console.WriteLine("ЖОПА")));
-            testSubMenu.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
-            testSubMenu.AddMenuItem(new MenuItem(0, "Завершить работу.", () => ProjectLooper.Instance.CancelProjectLoop()));
-            
+            // Меню по форме обучения
+            testSubMenuF.AddMenuItem(new MenuItem(1, "Общий список по форме обучения", () => _agent.FormedEducationWrappedModel.DisplayInto()));
+            testSubMenuF.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuF.AddMenuItem(new MenuItem(3, "Добавить формеу обучения", () => _agent.FormedEducationWrappedModel.AddRow()));
+            testSubMenuF.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.FormedEducationWrappedModel.UpdateRow()));
+            testSubMenuF.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.FormedEducationWrappedModel.RemoveRow()));
+            // Конец меню по форме обучения
+
+            // Меню по форме по направлению
+            testSubMenuQ.AddMenuItem(new MenuItem(1, "Общий список по форме обучения", () => _agent.QualificationWrappedModel.DisplayInto()));
+            testSubMenuQ.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuQ.AddMenuItem(new MenuItem(3, "Добавить формеу обучения", () => _agent.QualificationWrappedModel.AddRow()));
+            testSubMenuQ.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.QualificationWrappedModel.UpdateRow()));
+            testSubMenuQ.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.QualificationWrappedModel.RemoveRow()));
+            // Конец меню по направлению
+
             MenuPresenter.Instance.SetCurrentMenu(parentMenu);
             OnDeclared();
         }

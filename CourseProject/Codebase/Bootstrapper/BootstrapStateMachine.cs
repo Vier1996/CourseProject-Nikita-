@@ -1,5 +1,6 @@
 using CourseProject.Codebase.Bootstrapper.States;
 using CourseProject.Codebase.Context;
+using CourseProject.Codebase.MySql;
 using CourseProject.Codebase.StateMachine;
 
 namespace CourseProject.Codebase.Bootstrapper
@@ -11,13 +12,13 @@ namespace CourseProject.Codebase.Bootstrapper
         private readonly List<BootstrapState> _bootstrapStates = new List<BootstrapState>();
         private BootstrapState _currentBootstrapState = null;
 
-        public BootstrapStateMachine(ProjectDbContext dbContext)
+        public BootstrapStateMachine(ProjectDbContext dbContext, MySqlAgent agent)
         {
             BootstrapPayload bootstrapPayload = PreparePayload();
             
             _bootstrapStates.Add(new RegisterProjectLooperState(bootstrapPayload));
-            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload, dbContext));
-            _bootstrapStates.Add(new RegisterMenuServiceState(bootstrapPayload));
+            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload, dbContext, agent));
+            _bootstrapStates.Add(new RegisterMenuServiceState(bootstrapPayload, agent));
         }
 
         public void Resolve() => SwitchState(_bootstrapStates.First());

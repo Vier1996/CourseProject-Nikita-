@@ -3,18 +3,20 @@ using CourseProject.Codebase.Context;
 using CourseProject.Codebase.Disposable;
 using CourseProject.Codebase.Looper;
 using CourseProject.Codebase.Menu;
+using CourseProject.Codebase.MySql;
 
 namespace CourseProject.Codebase.InternalProject
 {
     public class Project
     {
         private ProjectDbContext _projectDbContext;
+        private MySqlAgent _agent;
         private readonly BootstrapStateMachine _bootstrapStateMachine;
         private readonly Disposer _disposer;
         
         public Project()
         {
-            _bootstrapStateMachine = new BootstrapStateMachine(_projectDbContext);
+            _bootstrapStateMachine = new BootstrapStateMachine(_projectDbContext, _agent);
             _disposer = new Disposer();
 
             _bootstrapStateMachine.StatesResolved += OnBootstrapResolved;
