@@ -1025,24 +1025,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Vier\\.nuget\\packages\\": {}
+    "/Users/admin/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projects\\CoursePrj\\CourseProject\\CourseProject.csproj",
+      "projectUniqueName": "/Users/admin/RiderProjects/CourseProject-Nikita-/CourseProject/CourseProject.csproj",
       "projectName": "CourseProject",
-      "projectPath": "D:\\Projects\\CoursePrj\\CourseProject\\CourseProject.csproj",
-      "packagesPath": "C:\\Users\\Vier\\.nuget\\packages\\",
-      "outputPath": "D:\\Projects\\CoursePrj\\CourseProject\\obj\\",
+      "projectPath": "/Users/admin/RiderProjects/CourseProject-Nikita-/CourseProject/CourseProject.csproj",
+      "packagesPath": "/Users/admin/.nuget/packages/",
+      "outputPath": "/Users/admin/RiderProjects/CourseProject-Nikita-/CourseProject/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Vier\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/admin/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
+        "/usr/local/share/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1096,7 +1097,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.201/RuntimeIdentifierGraph.json"
       }
     }
   }

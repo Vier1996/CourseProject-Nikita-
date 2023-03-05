@@ -1,5 +1,5 @@
-//#define RUDOLF
-#define VIER
+#define RUDOLF
+//#define VIER
 
 using System.Data;
 using CourseProject.Codebase.Disposable;
@@ -24,7 +24,7 @@ namespace CourseProject.Codebase.MySQL
             _creditionals.Port = 3306;
             _creditionals.UserID = "root";
             _creditionals.Password = "viprudolf";
-            _creditionals.Database = "taskdatabase";
+            _creditionals.Database = "projectdatabase";
             #endif
 
             #if VIER

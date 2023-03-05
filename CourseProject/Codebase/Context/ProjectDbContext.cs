@@ -16,9 +16,9 @@ public class ProjectDbContext : DbContext
     public ProjectDbContext()
     {
         _credits.Server = "127.0.0.1";
-        _credits.Port = 57736;
+        _credits.Port = 3306;
         _credits.UserID = "root";
-        _credits.Password = "admin";
+        _credits.Password = "viprudolf";
         _credits.Database = "projectdatabase";
     }
 

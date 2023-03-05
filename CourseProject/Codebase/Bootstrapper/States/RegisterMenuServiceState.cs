@@ -18,53 +18,50 @@ namespace CourseProject.Codebase.Bootstrapper.States
         private void DeclareMenus()
         {
             MenuView parentMenu = new MenuView("Главное меню");
-          
-            MenuView testSubMenu = new MenuView("Вспомогательное меню");
+            MenuView testSubMenuG= new MenuView("Меню по группам");
+            MenuView testSubMenuS= new MenuView("Меню по специальности");
+            MenuView testSubMenuF= new MenuView("Меню по форме обучению");
+            MenuView testSubMenuQ= new MenuView("Меню по направлению");
             
-            parentMenu.AddMenuItem(new MenuItem(1, "Полный отчет", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-
-            }));
-            parentMenu.AddMenuItem(new MenuItem(2, "Вывести по направлению", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-
-            }));
-            parentMenu.AddMenuItem(new MenuItem(3, "Вывести по колличеству студентов", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-
-            }));
-            parentMenu.AddMenuItem(new MenuItem(4, "Вывеси по названию группы", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
-
-            parentMenu.AddMenuItem(new MenuItem(5, "Редактирование", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
-            parentMenu.AddMenuItem(new MenuItem(6, "Добавление", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
-            parentMenu.AddMenuItem(new MenuItem(7, "Удаление", () =>
-            {
-                Console.WriteLine("Перешли в меню поглубже...");
-                MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
-            }));
-            parentMenu.AddMenuItem(new MenuItem(0, "Завершить работу.", () => ProjectLooper.Instance.CancelProjectLoop()));
+            // Главное меню
+            parentMenu.AddMenuItem(new MenuItem(1, "Меню по группам", ()=>MenuPresenter.Instance.SetCurrentMenu(testSubMenuG))); 
+            parentMenu.AddMenuItem(new MenuItem(2, "Меню по специальности", ()=>MenuPresenter.Instance.SetCurrentMenu(testSubMenuS)));
+            parentMenu.AddMenuItem(new MenuItem(3, "Меню по форме обучения", ()=>MenuPresenter.Instance.SetCurrentMenu(testSubMenuF)));
+            parentMenu.AddMenuItem(new MenuItem(4, "Меню по направлению ", ()=>MenuPresenter.Instance.SetCurrentMenu(testSubMenuQ)));
+            parentMenu.AddMenuItem(new MenuItem(0, "Завершить работу ", ()=> ProjectLooper.Instance.CancelProjectLoop()));
+            // Конец главного меню
             
-            testSubMenu.AddMenuItem(new MenuItem(1, "Вывести в лог {ЖОПА}", () => Console.WriteLine("ЖОПА")));
-            testSubMenu.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
-            testSubMenu.AddMenuItem(new MenuItem(0, "Завершить работу.", () => ProjectLooper.Instance.CancelProjectLoop()));
+            // Меню по группам
+            testSubMenuG.AddMenuItem(new MenuItem(1, "Общий список групп", ()=>{})); 
+            testSubMenuG.AddMenuItem(new MenuItem(2, "Вернуться", ()=>MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuG.AddMenuItem(new MenuItem(3, "Добавить группу", ()=>{}));
+            testSubMenuG.AddMenuItem(new MenuItem(4, "Редактировать", ()=>{}));
+            testSubMenuG.AddMenuItem(new MenuItem(5, "Удалить", ()=>{}));
+            // Конец меню по группам
+            
+            // Меню по специальности
+            testSubMenuS.AddMenuItem(new MenuItem(1, "Общий список по специальности", ()=>{})); 
+            testSubMenuS.AddMenuItem(new MenuItem(2, "Вернуться", ()=>MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuS.AddMenuItem(new MenuItem(3, "Добавить специальность", ()=>{}));
+            testSubMenuS.AddMenuItem(new MenuItem(4, "Редактировать", ()=>{}));
+            testSubMenuS.AddMenuItem(new MenuItem(5, "Удалить", ()=>{}));
+            // Конец меню по специальности
+            
+            // Меню по форме обучения
+            testSubMenuF.AddMenuItem(new MenuItem(1, "Общий список по форме обучения", ()=>{})); 
+            testSubMenuF.AddMenuItem(new MenuItem(2, "Вернуться", ()=>MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuF.AddMenuItem(new MenuItem(3, "Добавить формеу обучения", ()=>{}));
+            testSubMenuF.AddMenuItem(new MenuItem(4, "Редактировать", ()=>{}));
+            testSubMenuF.AddMenuItem(new MenuItem(5, "Удалить", ()=>{}));
+            // Конец меню по форме обучения
+            
+            // Меню по форме по направлению
+            testSubMenuQ.AddMenuItem(new MenuItem(1, "Общий список по форме обучения", ()=>{})); 
+            testSubMenuQ.AddMenuItem(new MenuItem(2, "Вернуться", ()=>MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
+            testSubMenuQ.AddMenuItem(new MenuItem(3, "Добавить формеу обучения", ()=>{}));
+            testSubMenuQ.AddMenuItem(new MenuItem(4, "Редактировать", ()=>{}));
+            testSubMenuQ.AddMenuItem(new MenuItem(5, "Удалить", ()=>{}));
+            // Конец меню по направлению
             
             MenuPresenter.Instance.SetCurrentMenu(parentMenu);
             OnDeclared();
