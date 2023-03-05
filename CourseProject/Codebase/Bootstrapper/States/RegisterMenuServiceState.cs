@@ -18,7 +18,6 @@ namespace CourseProject.Codebase.Bootstrapper.States
         private void DeclareMenus()
         {
             MenuView parentMenu = new MenuView("Главное меню");
-          
             MenuView testSubMenu = new MenuView("Вспомогательное меню");
             
             parentMenu.AddMenuItem(new MenuItem(1, "Полный отчет", () =>
@@ -27,18 +26,21 @@ namespace CourseProject.Codebase.Bootstrapper.States
                 MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
 
             }));
+            
             parentMenu.AddMenuItem(new MenuItem(2, "Вывести по направлению", () =>
             {
                 Console.WriteLine("Перешли в меню поглубже...");
                 MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
 
             }));
+            
             parentMenu.AddMenuItem(new MenuItem(3, "Вывести по колличеству студентов", () =>
             {
                 Console.WriteLine("Перешли в меню поглубже...");
                 MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
 
             }));
+            
             parentMenu.AddMenuItem(new MenuItem(4, "Вывеси по названию группы", () =>
             {
                 Console.WriteLine("Перешли в меню поглубже...");
@@ -50,16 +52,19 @@ namespace CourseProject.Codebase.Bootstrapper.States
                 Console.WriteLine("Перешли в меню поглубже...");
                 MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
             }));
+            
             parentMenu.AddMenuItem(new MenuItem(6, "Добавление", () =>
             {
                 Console.WriteLine("Перешли в меню поглубже...");
                 MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
             }));
+            
             parentMenu.AddMenuItem(new MenuItem(7, "Удаление", () =>
             {
                 Console.WriteLine("Перешли в меню поглубже...");
                 MenuPresenter.Instance.SetCurrentMenu(testSubMenu);
             }));
+            
             parentMenu.AddMenuItem(new MenuItem(0, "Завершить работу.", () => ProjectLooper.Instance.CancelProjectLoop()));
             
             testSubMenu.AddMenuItem(new MenuItem(1, "Вывести в лог {ЖОПА}", () => Console.WriteLine("ЖОПА")));

@@ -1,34 +1,31 @@
-using CourseProject.Codebase.MySQL;
+using CourseProject.Codebase.Context;
 
 namespace CourseProject.Codebase.Bootstrapper.States
 {
     public class RegisterSqlServiceState : BootstrapState
     {
-        public RegisterSqlServiceState(BootstrapPayload payload) : base(payload)
+        private ProjectDbContext _dbContext;
+        
+        public RegisterSqlServiceState(BootstrapPayload payload, ProjectDbContext dbContext) : base(payload)
         {
+            _dbContext = dbContext;
         }
         
         public override void Enter(Action onComplete)
         {
-            RegisterSql();
+            RegisterEntityFramework();
+            
             onComplete?.Invoke();
         }
 
-        private void RegisterSql()
+        private void RegisterEntityFramework()
         {
-            if (MySqlService.Instance.IsReady)
-            {
-                OnSqlStarted();
-                return;
-            }
-
-            MySqlService.Instance.ConnectionSuccessfullyEstablished += OnSqlStarted;
-            MySqlService.Instance.ConnectToDataBase();
+            _dbContext = new ProjectDbContext();
+            _dbContext.OnInitializationComplete(OnEntityFrameworkStarted);
         }
 
-        private void OnSqlStarted()
+        private void OnEntityFrameworkStarted()
         {
-            MySqlService.Instance.ConnectionSuccessfullyEstablished -= OnSqlStarted;
             _payload.StateDemander.DemandNextState();
         }
 

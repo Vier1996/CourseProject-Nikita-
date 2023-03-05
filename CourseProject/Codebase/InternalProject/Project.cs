@@ -1,24 +1,21 @@
 using CourseProject.Codebase.Bootstrapper;
-using CourseProject.Codebase.Constants.DataBaseModel;
+using CourseProject.Codebase.Context;
 using CourseProject.Codebase.Disposable;
 using CourseProject.Codebase.Looper;
 using CourseProject.Codebase.Menu;
-using CourseProject.Codebase.MySQL;
 
 namespace CourseProject.Codebase.InternalProject
 {
-    public class Project 
+    public class Project
     {
+        private ProjectDbContext _projectDbContext;
         private readonly BootstrapStateMachine _bootstrapStateMachine;
         private readonly Disposer _disposer;
-
-        private MySqlService _sqlService;
         
         public Project()
         {
-            _bootstrapStateMachine = new BootstrapStateMachine();
+            _bootstrapStateMachine = new BootstrapStateMachine(_projectDbContext);
             _disposer = new Disposer();
-            _sqlService = MySqlService.Instance;
 
             _bootstrapStateMachine.StatesResolved += OnBootstrapResolved;
             _bootstrapStateMachine.Resolve();
@@ -56,13 +53,5 @@ namespace CourseProject.Codebase.InternalProject
         private void CallMenu() => MenuPresenter.Instance.ShowMenu();
         
         private void ApplyCallback(int callbackIndex) => MenuPresenter.Instance.ApplyCallback(callbackIndex);
-
-        private void DebugSelect()
-        {
-            MySqlCustomCommand customCommand = new MySqlCustomCommand();
-            customCommand.SelectOption(Group.MODEL_NAME);
-            
-            _sqlService.ExecuteCommand(customCommand);
-        }
     }
 }

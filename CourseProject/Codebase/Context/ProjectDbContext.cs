@@ -13,6 +13,8 @@ public class ProjectDbContext : DbContext
     public DbSet<FormedEducationModel> FormedEducations { get; set; }
     public DbSet<SpecialityModel> Specialities { get; set; }
 
+    private Action _onComplete = null;
+    
     public ProjectDbContext()
     {
         _credits.Server = "127.0.0.1";
@@ -20,6 +22,12 @@ public class ProjectDbContext : DbContext
         _credits.UserID = "root";
         _credits.Password = "admin";
         _credits.Database = "projectdatabase";
+    }
+
+    public ProjectDbContext OnInitializationComplete(Action onComplete)
+    {
+        _onComplete = onComplete;
+        return this;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

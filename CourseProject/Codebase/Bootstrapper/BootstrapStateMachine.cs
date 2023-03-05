@@ -1,4 +1,5 @@
 using CourseProject.Codebase.Bootstrapper.States;
+using CourseProject.Codebase.Context;
 using CourseProject.Codebase.StateMachine;
 
 namespace CourseProject.Codebase.Bootstrapper
@@ -7,15 +8,15 @@ namespace CourseProject.Codebase.Bootstrapper
     {
         public event Action StatesResolved;
         
-        private List<BootstrapState> _bootstrapStates = new List<BootstrapState>();
+        private readonly List<BootstrapState> _bootstrapStates = new List<BootstrapState>();
         private BootstrapState _currentBootstrapState = null;
 
-        public BootstrapStateMachine()
+        public BootstrapStateMachine(ProjectDbContext dbContext)
         {
             BootstrapPayload bootstrapPayload = PreparePayload();
             
             _bootstrapStates.Add(new RegisterProjectLooperState(bootstrapPayload));
-            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload));
+            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload, dbContext));
             _bootstrapStates.Add(new RegisterMenuServiceState(bootstrapPayload));
         }
 
