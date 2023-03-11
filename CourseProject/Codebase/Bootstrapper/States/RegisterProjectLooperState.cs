@@ -27,5 +27,7 @@ namespace CourseProject.Codebase.Bootstrapper.States
         }
         
         public override void Exit(Action onComplete) => onComplete?.Invoke();
+
+        public override void Dispose() { }
     }
 }

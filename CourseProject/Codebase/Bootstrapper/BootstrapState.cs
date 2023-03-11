@@ -2,7 +2,7 @@ using CourseProject.Codebase.StateMachine;
 
 namespace CourseProject.Codebase.Bootstrapper
 {
-    public class BootstrapState : IState
+    public class BootstrapState : IState, IDisposable
     {
         protected BootstrapPayload _payload;
         
@@ -14,5 +14,10 @@ namespace CourseProject.Codebase.Bootstrapper
         public virtual void Enter(Action onComplete) => onComplete?.Invoke();
 
         public virtual void Exit(Action onComplete) => onComplete.Invoke();
+
+        public virtual void Dispose()
+        {
+            
+        }
     }
 }

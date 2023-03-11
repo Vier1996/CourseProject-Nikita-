@@ -1,17 +1,11 @@
 using CourseProject.Codebase.Looper;
 using CourseProject.Codebase.Menu;
-using CourseProject.Codebase.MySql;
 
 namespace CourseProject.Codebase.Bootstrapper.States
 {
-    public class RegisterMenuServiceState : BootstrapState
+    public class RegisterMenuServiceState : BootstrapState, IDisposable
     {
-        private MySqlAgent _agent;
-        
-        public RegisterMenuServiceState(BootstrapPayload payload, MySqlAgent agent) : base(payload)
-        {
-            _agent = agent;
-        }
+        public RegisterMenuServiceState(BootstrapPayload payload) : base(payload) { }
         
         public override void Enter(Action onComplete)
         {
@@ -36,35 +30,35 @@ namespace CourseProject.Codebase.Bootstrapper.States
             // Конец главного меню
 
             // Меню по группам
-            testSubMenuG.AddMenuItem(new MenuItem(1, "Общий список групп", () => _agent.GroupWrappedModel.DisplayInto()));
-            testSubMenuG.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
-            testSubMenuG.AddMenuItem(new MenuItem(3, "Добавить группу", () => _agent.GroupWrappedModel.AddRow()));
-            testSubMenuG.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.GroupWrappedModel.UpdateRow()));
-            testSubMenuG.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.GroupWrappedModel.RemoveRow()));
+            testSubMenuG.AddMenuItem(new MenuItem(1, "Вывести общий список групп", () => _payload.MySqlAgent.GroupWrappedModel.DisplayInto()));
+            testSubMenuG.AddMenuItem(new MenuItem(2, "Добавить группу", () => _payload.MySqlAgent.GroupWrappedModel.AddRow()));
+            testSubMenuG.AddMenuItem(new MenuItem(3, "Редактировать группу", () => _payload.MySqlAgent.GroupWrappedModel.UpdateRow()));
+            testSubMenuG.AddMenuItem(new MenuItem(4, "Удалить группу", () => _payload.MySqlAgent.GroupWrappedModel.RemoveRow()));
+            testSubMenuG.AddMenuItem(new MenuItem(0, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
             // Конец меню по группам
 
             // Меню по специальности
-            testSubMenuS.AddMenuItem(new MenuItem(1, "Общий список по специальности", () => _agent.SpecialityWrappedModel.DisplayInto()));
-            testSubMenuS.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
-            testSubMenuS.AddMenuItem(new MenuItem(3, "Добавить специальность", () => _agent.SpecialityWrappedModel.AddRow()));
-            testSubMenuS.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.SpecialityWrappedModel.UpdateRow()));
-            testSubMenuS.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.SpecialityWrappedModel.RemoveRow()));
+            testSubMenuS.AddMenuItem(new MenuItem(1, "Вывести общий список по специальности", () => _payload.MySqlAgent.SpecialityWrappedModel.DisplayInto()));
+            testSubMenuS.AddMenuItem(new MenuItem(2, "Добавить специальность", () => _payload.MySqlAgent.SpecialityWrappedModel.AddRow()));
+            testSubMenuS.AddMenuItem(new MenuItem(3, "Редактировать", () => _payload.MySqlAgent.SpecialityWrappedModel.UpdateRow()));
+            testSubMenuS.AddMenuItem(new MenuItem(4, "Удалить", () => _payload.MySqlAgent.SpecialityWrappedModel.RemoveRow()));
+            testSubMenuS.AddMenuItem(new MenuItem(0, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
             // Конец меню по специальности
 
             // Меню по форме обучения
-            testSubMenuF.AddMenuItem(new MenuItem(1, "Общий список по форме обучения", () => _agent.FormedEducationWrappedModel.DisplayInto()));
-            testSubMenuF.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
-            testSubMenuF.AddMenuItem(new MenuItem(3, "Добавить формеу обучения", () => _agent.FormedEducationWrappedModel.AddRow()));
-            testSubMenuF.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.FormedEducationWrappedModel.UpdateRow()));
-            testSubMenuF.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.FormedEducationWrappedModel.RemoveRow()));
+            testSubMenuF.AddMenuItem(new MenuItem(1, "Вывести общий список по форме обучения", () => _payload.MySqlAgent.FormedEducationWrappedModel.DisplayInto()));
+            testSubMenuF.AddMenuItem(new MenuItem(2, "Добавить формеу обучения", () => _payload.MySqlAgent.FormedEducationWrappedModel.AddRow()));
+            testSubMenuF.AddMenuItem(new MenuItem(3, "Редактировать", () => _payload.MySqlAgent.FormedEducationWrappedModel.UpdateRow()));
+            testSubMenuF.AddMenuItem(new MenuItem(4, "Удалить", () => _payload.MySqlAgent.FormedEducationWrappedModel.RemoveRow()));
+            testSubMenuF.AddMenuItem(new MenuItem(0, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
             // Конец меню по форме обучения
 
             // Меню по форме по направлению
-            testSubMenuQ.AddMenuItem(new MenuItem(1, "Общий список по форме обучения", () => _agent.QualificationWrappedModel.DisplayInto()));
-            testSubMenuQ.AddMenuItem(new MenuItem(2, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
-            testSubMenuQ.AddMenuItem(new MenuItem(3, "Добавить формеу обучения", () => _agent.QualificationWrappedModel.AddRow()));
-            testSubMenuQ.AddMenuItem(new MenuItem(4, "Редактировать", () => _agent.QualificationWrappedModel.UpdateRow()));
-            testSubMenuQ.AddMenuItem(new MenuItem(5, "Удалить", () => _agent.QualificationWrappedModel.RemoveRow()));
+            testSubMenuQ.AddMenuItem(new MenuItem(1, "Вывести общий список по форме обучения", () => _payload.MySqlAgent.QualificationWrappedModel.DisplayInto()));
+            testSubMenuQ.AddMenuItem(new MenuItem(2, "Добавить формеу обучения", () => _payload.MySqlAgent.QualificationWrappedModel.AddRow()));
+            testSubMenuQ.AddMenuItem(new MenuItem(3, "Редактировать", () => _payload.MySqlAgent.QualificationWrappedModel.UpdateRow()));
+            testSubMenuQ.AddMenuItem(new MenuItem(4, "Удалить", () => _payload.MySqlAgent.QualificationWrappedModel.RemoveRow()));
+            testSubMenuQ.AddMenuItem(new MenuItem(0, "Вернуться", () => MenuPresenter.Instance.SetCurrentMenu(parentMenu)));
             // Конец меню по направлению
 
             MenuPresenter.Instance.SetCurrentMenu(parentMenu);
@@ -74,5 +68,7 @@ namespace CourseProject.Codebase.Bootstrapper.States
         private void OnDeclared() => _payload.StateDemander.DemandNextState();
 
         public override void Exit(Action onComplete) => onComplete?.Invoke();
+
+        public override void Dispose() { }
     }
 }

@@ -3,16 +3,9 @@ using CourseProject.Codebase.MySql;
 
 namespace CourseProject.Codebase.Bootstrapper.States
 {
-    public class RegisterSqlServiceState : BootstrapState
+    public class RegisterSqlServiceState : BootstrapState, IDisposable
     {
-        private ProjectDbContext _dbContext;
-        private MySqlAgent _agent;
-        
-        public RegisterSqlServiceState(BootstrapPayload payload, ProjectDbContext dbContext, MySqlAgent agent) : base(payload)
-        {
-            _dbContext = dbContext;
-            _agent = agent;
-        }
+        public RegisterSqlServiceState(BootstrapPayload payload) : base(payload) { }
         
         public override void Enter(Action onComplete)
         {
@@ -23,8 +16,8 @@ namespace CourseProject.Codebase.Bootstrapper.States
 
         private void RegisterEntityFramework()
         {
-            _dbContext = new ProjectDbContext();
-            _agent = new MySqlAgent(_dbContext);
+            _payload.ProjectDbContext = new ProjectDbContext();
+            _payload.MySqlAgent = new MySqlAgent(_payload.ProjectDbContext);
             
             OnEntityFrameworkStarted();
         }
@@ -35,5 +28,8 @@ namespace CourseProject.Codebase.Bootstrapper.States
         }
 
         public override void Exit(Action onComplete) => onComplete?.Invoke();
+
+        public override void Dispose() => 
+            _payload.ProjectDbContext.SaveChanges();
     }
 }
