@@ -1,5 +1,4 @@
 ﻿using CourseProject.Codebase.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject.Codebase.MySql.Models;
 
@@ -7,21 +6,21 @@ public class FormedEducationWrappedModel : DatabaseModel<FormedEducationModel>
 {
     private ProjectDbContext _dbContext;
     
-    public FormedEducationWrappedModel(ProjectDbContext dbContext, bool logging = true) : base(logging)
+    public FormedEducationWrappedModel(ProjectDbContext dbContext, bool logging = true) : base(dbContext.FormedEducations, logging)
         => _dbContext = dbContext;
     
     protected override EFTransactionArgs<FormedEducationModel> TryAddRow()
     {
         FormedEducationModel formedEducationModel = new FormedEducationModel();
         
-        Console.WriteLine("Введите название формы обучения...\n");
+        Console.WriteLine("Введите название формы обучения...");
         formedEducationModel.FormName = Console.ReadLine();
 
-        FormedEducationModel existingModel = _dbContext.FormedEducations.FirstOrDefault(it => it.FormName == formedEducationModel.FormName);
+        FormedEducationModel existingModel = Find(formedEducationModel);
         
         if (existingModel == default)
         {
-            _dbContext.FormedEducations.Add(formedEducationModel);
+            _container.Add(formedEducationModel);
             _dbContext.SaveChanges();
 
             return new EFTransactionArgs<FormedEducationModel>(
@@ -37,19 +36,12 @@ public class FormedEducationWrappedModel : DatabaseModel<FormedEducationModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             "Добавление не нуждается, данный елемент уже есть в таблице!");
     }
+    
     protected override EFTransactionArgs<FormedEducationModel> TryRemoveRow(int modelIndex)
     {
         int index = 0;
-        FormedEducationModel model = default;
-
-        _dbContext.FormedEducations.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
-
+        FormedEducationModel model = FindByIndex(modelIndex);
+        
         if (model == default)
         {
             return new EFTransactionArgs<FormedEducationModel>(
@@ -59,7 +51,7 @@ public class FormedEducationWrappedModel : DatabaseModel<FormedEducationModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        _dbContext.FormedEducations.Remove(model);
+        _container.Remove(model);
         _dbContext.SaveChanges();
 
         return new EFTransactionArgs<FormedEducationModel>(
@@ -68,19 +60,12 @@ public class FormedEducationWrappedModel : DatabaseModel<FormedEducationModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             $"Елемент с индексом:[{modelIndex+1}] удален!");
     }
+    
     protected override EFTransactionArgs<FormedEducationModel> TryUpdateRow(int modelIndex)
     {
         int index = 0;
-        FormedEducationModel model = default;
-
-        _dbContext.FormedEducations.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
-
+        FormedEducationModel model = FindByIndex(modelIndex);
+        
         if (model == default)
         {
             return new EFTransactionArgs<FormedEducationModel>(
@@ -90,7 +75,7 @@ public class FormedEducationWrappedModel : DatabaseModel<FormedEducationModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        Console.WriteLine("Введите название формы обучения...\n");
+        Console.WriteLine("Введите название формы обучения...");
         model.FormName = Console.ReadLine();
         
         _dbContext.SaveChanges();
@@ -101,19 +86,24 @@ public class FormedEducationWrappedModel : DatabaseModel<FormedEducationModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             $"Елемент с индексом:[{modelIndex+1}] обновлен!");
     }
+    
     protected override EFTransactionArgs<FormedEducationModel> TryDisplayInfo()
     {
+        int index = 0;
         string info = "";
 
-        _dbContext.FormedEducations.ForEachAsync(el =>
+        foreach (FormedEducationModel model in _container.OrderBy(fe => fe.Id))
         {
-            info += $"FormName: {el.FormName}\n";
-        });
+            info += $"Index: {++index} | FormName: {model.FormName}.\n";
+        }
+
+        if (index != 0) 
+            Console.WriteLine(info);
 
         return new EFTransactionArgs<FormedEducationModel>(
             null,
             EFTransactionType.SUCCESSFUL,
             EFTransactionReason.NONE, 
-            $"Елементы выведены успешно!");
+            index != 0 ? $"Елементы выведены успешно!" : "Тут пусто :(");
     }
 }

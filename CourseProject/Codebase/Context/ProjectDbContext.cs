@@ -49,9 +49,15 @@ public class GroupModel
     public int CountOfStudents { get; set; }
     public int CountOfSubGroups { get; set; }
 
-    public virtual QualificationModel QualificationReference { get; set; }
-    public virtual FormedEducationModel FormedEducationReference { get; set; }
-    public virtual SpecialityModel SpecialityReference { get; set; }
+
+    public QualificationModel? QualificationReference { get; set; }
+    public int QualificationReferenceId { get; set; }
+    public FormedEducationModel? FormedEducationReference { get; set; }
+    public int FormedEducationReferenceId { get; set; }
+
+    public SpecialityModel? SpecialityReference { get; set; }
+    public int SpecialityReferenceId { get; set; }
+
 }
 
 public class QualificationModel

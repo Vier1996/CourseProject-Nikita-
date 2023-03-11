@@ -1,5 +1,4 @@
 ﻿using CourseProject.Codebase.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject.Codebase.MySql.Models;
 
@@ -7,19 +6,21 @@ public class QualificationWrappedModel : DatabaseModel<QualificationModel>
 {
     private ProjectDbContext _dbContext;
     
-    public QualificationWrappedModel(ProjectDbContext dbContext, bool logging = true) : base(logging)
+    public QualificationWrappedModel(ProjectDbContext dbContext, bool logging = true) : base(dbContext.Qualifications, logging)
         => _dbContext = dbContext;
+    
     protected override EFTransactionArgs<QualificationModel> TryAddRow()
     {
         QualificationModel qualificationModel = new QualificationModel();
         
-        Console.WriteLine("Введите название квалификации...\n");
+        Console.WriteLine("Введите название квалификации...");
         qualificationModel.QualificationName = Console.ReadLine();
+
+        QualificationModel existingModel = Find(qualificationModel);
         
-        QualificationModel existingModel = _dbContext.Qualifications.FirstOrDefault(it => it.QualificationName == qualificationModel.QualificationName);
         if (existingModel == default)
         {
-            _dbContext.Qualifications.Add(qualificationModel);
+            _container.Add(qualificationModel);
             _dbContext.SaveChanges();
             
             return new EFTransactionArgs<QualificationModel>(
@@ -35,19 +36,12 @@ public class QualificationWrappedModel : DatabaseModel<QualificationModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             "Добавление не нуждается, данный елемент уже есть в таблице!");
     }
+    
     protected override EFTransactionArgs<QualificationModel> TryRemoveRow(int modelIndex)
     {
         int index = 0;
-        QualificationModel model = default;
-
-        _dbContext.Qualifications.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
-
+        QualificationModel model = FindByIndex(modelIndex);
+        
         if (model == default)
         {
             return new EFTransactionArgs<QualificationModel>(
@@ -57,7 +51,7 @@ public class QualificationWrappedModel : DatabaseModel<QualificationModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        _dbContext.Qualifications.Remove(model);
+        _container.Remove(model);
         _dbContext.SaveChanges();
 
         return new EFTransactionArgs<QualificationModel>(
@@ -66,18 +60,11 @@ public class QualificationWrappedModel : DatabaseModel<QualificationModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             $"Елемент с индексом:[{modelIndex+1}] удален!");
     }
+    
     protected override EFTransactionArgs<QualificationModel> TryUpdateRow(int modelIndex)
     {
         int index = 0;
-        QualificationModel model = default;
-
-        _dbContext.Qualifications.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
+        QualificationModel model = FindByIndex(modelIndex);
 
         if (model == default)
         {
@@ -88,7 +75,7 @@ public class QualificationWrappedModel : DatabaseModel<QualificationModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        Console.WriteLine("Введите название квалификации...\n");
+        Console.WriteLine("Введите название квалификации...");
         model.QualificationName = Console.ReadLine();
         
         _dbContext.SaveChanges();
@@ -99,19 +86,24 @@ public class QualificationWrappedModel : DatabaseModel<QualificationModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             $"Елемент с индексом:[{modelIndex+1}] обновлен!");
     }
+    
     protected override EFTransactionArgs<QualificationModel> TryDisplayInfo()
     {
+        int index = 0;
         string info = "";
 
-        _dbContext.Qualifications.ForEachAsync(el =>
+        foreach (QualificationModel model in _container.OrderBy(fe => fe.Id))
         {
-            info += $"QualificationName: {el.QualificationName}\n";
-        });
+            info += $"Index: {++index} | QualificationName: {model.QualificationName}.\n";
+        }
+
+        if (index != 0) 
+            Console.WriteLine(info);
 
         return new EFTransactionArgs<QualificationModel>(
             null,
             EFTransactionType.SUCCESSFUL,
             EFTransactionReason.NONE, 
-            $"Елементы выведены успешно!");
+            index != 0 ? $"Елементы выведены успешно!" : "Тут пусто :(");
     }
 }

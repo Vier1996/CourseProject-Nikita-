@@ -5,20 +5,20 @@ using CourseProject.Codebase.StateMachine;
 
 namespace CourseProject.Codebase.Bootstrapper
 {
-    public class BootstrapStateMachine : IStateSwitcher
+    public class BootstrapStateMachine : IStateSwitcher, IDisposable
     {
         public event Action StatesResolved;
         
         private readonly List<BootstrapState> _bootstrapStates = new List<BootstrapState>();
         private BootstrapState _currentBootstrapState = null;
-
-        public BootstrapStateMachine(ProjectDbContext dbContext, MySqlAgent agent)
+        
+        public BootstrapStateMachine()
         {
             BootstrapPayload bootstrapPayload = PreparePayload();
             
             _bootstrapStates.Add(new RegisterProjectLooperState(bootstrapPayload));
-            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload, dbContext, agent));
-            _bootstrapStates.Add(new RegisterMenuServiceState(bootstrapPayload, agent));
+            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload));
+            _bootstrapStates.Add(new RegisterMenuServiceState(bootstrapPayload));
         }
 
         public void Resolve() => SwitchState(_bootstrapStates.First());
@@ -59,5 +59,11 @@ namespace CourseProject.Codebase.Bootstrapper
             {
                 StateDemander = this
             };
+
+        public void Dispose()
+        {
+            for (int i = 0; i < _bootstrapStates.Count; i++) 
+                _bootstrapStates[i].Dispose();
+        }
     }
 }

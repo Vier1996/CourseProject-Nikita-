@@ -12,7 +12,8 @@ public class GroupWrappedModel : DatabaseModel<GroupModel>
     private FormedEducationWrappedModel _formedEducationWrappedModel;
     
     public GroupWrappedModel(ProjectDbContext dbContext, QualificationWrappedModel qualificationWrappedModel, 
-        SpecialityWrappedModel specialityWrappedModel, FormedEducationWrappedModel formedEducationWrappedModel, bool logging = true) : base(logging)
+        SpecialityWrappedModel specialityWrappedModel, FormedEducationWrappedModel formedEducationWrappedModel, bool logging = true) 
+        : base(dbContext.Groups, logging)
     {
         _dbContext = dbContext;
         _qualificationWrappedModel = qualificationWrappedModel;
@@ -24,39 +25,33 @@ public class GroupWrappedModel : DatabaseModel<GroupModel>
     {
         GroupModel groupModel = new GroupModel();
         
-        Console.WriteLine("Введите название факультета...\n");
+        Console.WriteLine("Введите название факультета...");
         groupModel.Faculty = Console.ReadLine();
         
-        Console.WriteLine("Введите название группы...\n");
+        Console.WriteLine("Введите название группы...");
         groupModel.GroupName = Console.ReadLine();
         
-        Console.WriteLine("Введите курс...\n");
+        Console.WriteLine("Введите курс...");
         groupModel.Course = Convert.ToInt32(Console.ReadLine());
         
-        Console.WriteLine("Введите кол-во студентов...\n");
+        Console.WriteLine("Введите кол-во студентов...");
         groupModel.CountOfStudents = Convert.ToInt32(Console.ReadLine());
         
-        Console.WriteLine("Введите кол-во подгрупп...\n");
+        Console.WriteLine("Введите кол-во подгрупп...");
         groupModel.CountOfSubGroups = Convert.ToInt32(Console.ReadLine());
         
         groupModel.QualificationReference = _qualificationWrappedModel.AddRow();
         groupModel.FormedEducationReference = _formedEducationWrappedModel.AddRow();
         groupModel.SpecialityReference = _specialityWrappedModel.AddRow();
-
-        GroupModel existingModel = _dbContext.Groups.FirstOrDefault(it => 
-            it.Faculty == groupModel.Faculty &&
-            it.GroupName == groupModel.GroupName &&
-            it.Course == groupModel.Course &&
-            it.CountOfStudents == groupModel.CountOfStudents &&
-            it.CountOfSubGroups == groupModel.CountOfSubGroups &&
-            it.QualificationReference == groupModel.QualificationReference &&
-            it.FormedEducationReference == groupModel.FormedEducationReference &&
-            it.SpecialityReference == groupModel.SpecialityReference
-            );
         
+        groupModel.QualificationReferenceId = groupModel.QualificationReference.Id;
+        groupModel.FormedEducationReferenceId = groupModel.FormedEducationReference.Id;
+        groupModel.SpecialityReferenceId = groupModel.SpecialityReference.Id;
+        
+        GroupModel existingModel = Find(groupModel);
         if (existingModel == default)
         {
-            _dbContext.Groups.Add(groupModel);
+            _container.Add(groupModel);
             _dbContext.SaveChanges();
 
             return new EFTransactionArgs<GroupModel>(
@@ -75,16 +70,8 @@ public class GroupWrappedModel : DatabaseModel<GroupModel>
     protected override EFTransactionArgs<GroupModel> TryRemoveRow(int modelIndex)
     {
         int index = 0;
-        GroupModel model = default;
-
-        _dbContext.Groups.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
-
+        GroupModel model = FindByIndex(modelIndex);
+        
         if (model == default)
         {
             return new EFTransactionArgs<GroupModel>(
@@ -94,7 +81,7 @@ public class GroupWrappedModel : DatabaseModel<GroupModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        _dbContext.Groups.Remove(model);
+        _container.Remove(model);
         _dbContext.SaveChanges();
 
         return new EFTransactionArgs<GroupModel>(
@@ -106,16 +93,8 @@ public class GroupWrappedModel : DatabaseModel<GroupModel>
     protected override EFTransactionArgs<GroupModel> TryUpdateRow(int modelIndex)
     {
         int index = 0;
-        GroupModel model = default;
-
-        _dbContext.Groups.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
-
+        GroupModel model = FindByIndex(modelIndex);
+        
         if (model == default)
         {
             return new EFTransactionArgs<GroupModel>(
@@ -125,24 +104,28 @@ public class GroupWrappedModel : DatabaseModel<GroupModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        Console.WriteLine("Введите название факультета...\n");
+        Console.WriteLine("Введите название факультета...");
         model.Faculty = Console.ReadLine();
         
-        Console.WriteLine("Введите название группы...\n");
+        Console.WriteLine("Введите название группы...");
         model.GroupName = Console.ReadLine();
         
-        Console.WriteLine("Введите курс...\n");
+        Console.WriteLine("Введите курс...");
         model.Course = Convert.ToInt32(Console.ReadLine());
         
-        Console.WriteLine("Введите кол-во студентов...\n");
+        Console.WriteLine("Введите кол-во студентов...");
         model.CountOfStudents = Convert.ToInt32(Console.ReadLine());
         
-        Console.WriteLine("Введите кол-во подгрупп...\n");
+        Console.WriteLine("Введите кол-во подгрупп...");
         model.CountOfSubGroups = Convert.ToInt32(Console.ReadLine());
         
         model.QualificationReference = _qualificationWrappedModel.AddRow();
         model.FormedEducationReference = _formedEducationWrappedModel.AddRow();
         model.SpecialityReference = _specialityWrappedModel.AddRow();
+
+        model.QualificationReferenceId = model.QualificationReference.Id;
+        model.FormedEducationReferenceId = model.FormedEducationReference.Id;
+        model.SpecialityReferenceId = model.SpecialityReference.Id;
         
         _dbContext.SaveChanges();
 
@@ -154,17 +137,35 @@ public class GroupWrappedModel : DatabaseModel<GroupModel>
     }
     protected override EFTransactionArgs<GroupModel> TryDisplayInfo()
     {
+        int index = 0;
         string info = "";
-        
-        _dbContext.FormedEducations.ForEachAsync(el =>
+
+        List<GroupModel> groupModels = _container.OrderBy(fe => fe.Id).ToList();
+        foreach (GroupModel model in groupModels)
         {
-            info += $"FormName: {el.FormName}\n";
-        });
-        
+            QualificationModel qualificationModel = _qualificationWrappedModel.Find(model.QualificationReferenceId);
+            FormedEducationModel formedEducationModel = _formedEducationWrappedModel.Find(model.FormedEducationReferenceId);
+            SpecialityModel specialityModel = _specialityWrappedModel.Find(model.SpecialityReferenceId);
+            
+            info += $"Index: {++index} | " +
+                    $"Faculty: {model.Faculty} || " +
+                    $"GroupName: {model.GroupName} || " +
+                    $"Course: {model.Course} || " +
+                    $"CountOfStudents: {model.CountOfStudents} || " +
+                    $"CountOfSubGroups: {model.CountOfSubGroups} || " +
+                    $"Qualification: {qualificationModel.QualificationName} || " +
+                    $"FormedEducation: {formedEducationModel.FormName} || " +
+                    $"Speciality: {specialityModel.SpecialityName} || " +
+                    $"SpecialityProfile: {specialityModel.Profile}. \n ";
+        }
+
+        if (index != 0) 
+            Console.WriteLine(info);
+
         return new EFTransactionArgs<GroupModel>(
             null,
             EFTransactionType.SUCCESSFUL,
             EFTransactionReason.NONE, 
-            $"Елементы выведены успешно!");
+            index != 0 ? $"Елементы выведены успешно!" : "Тут пусто :(");
     }
 }

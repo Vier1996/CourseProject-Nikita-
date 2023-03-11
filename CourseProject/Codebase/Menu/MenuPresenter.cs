@@ -23,12 +23,12 @@ namespace CourseProject.Codebase.Menu
             MenuView currentView = _currentMenu;
             List<MenuItem> items = currentView.GetItems();
 
-            string consoleLog = "----" + currentView.GetTitle() + "\n";
+            string consoleLog = "[" + currentView.GetTitle() + "]\n";
 
             for (int i = 0; i < items.Count; i++) 
-                consoleLog += items[i].GetIndex() + ".->" + items[i].GetName() + "\n";
+                consoleLog += items[i].GetIndex() + ".-> " + items[i].GetName() + "\n";
 
-            consoleLog += "---- нажмите клавишу Enter\n";
+            consoleLog += "--> Чтобы продолжить, введите число и нажмите клавишу (Enter)\n";
             
             Console.WriteLine(consoleLog);
         }
@@ -44,8 +44,6 @@ namespace CourseProject.Codebase.Menu
             Console.Clear();
             
             item.GetCallback()?.Invoke();
-            
-            Console.WriteLine("\n");
         }
     }
 }

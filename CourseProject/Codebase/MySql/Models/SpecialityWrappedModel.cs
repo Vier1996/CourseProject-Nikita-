@@ -1,5 +1,4 @@
 ﻿using CourseProject.Codebase.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject.Codebase.MySql.Models;
 
@@ -7,26 +6,24 @@ public class SpecialityWrappedModel : DatabaseModel<SpecialityModel>
 {
     private ProjectDbContext _dbContext;
     
-    public SpecialityWrappedModel(ProjectDbContext dbContext, bool logging = true) : base(logging)
-        => _dbContext = dbContext;
-    
+    public SpecialityWrappedModel(ProjectDbContext dbContext, bool logging = true) : base(dbContext.Specialities, logging) => 
+        _dbContext = dbContext;
+
     protected override EFTransactionArgs<SpecialityModel> TryAddRow()
     {
         SpecialityModel specialityModel = new SpecialityModel();
         
-        Console.WriteLine("Введите название специализации...\n");
+        Console.WriteLine("Введите название специализации...");
         specialityModel.SpecialityName = Console.ReadLine();
         
-        Console.WriteLine("Введите название профиля...\n");
+        Console.WriteLine("Введите название профиля...");
         specialityModel.Profile = Console.ReadLine();
-        
-        SpecialityModel existingModel = _dbContext.Specialities.FirstOrDefault(it => 
-            it.SpecialityName == specialityModel.SpecialityName && 
-            it.Profile == specialityModel.Profile);
+
+        SpecialityModel existingModel = Find(specialityModel);
         
         if (existingModel == default)
         {
-            _dbContext.Specialities.Add(specialityModel);
+            _container.Add(specialityModel);
             _dbContext.SaveChanges();
 
             return new EFTransactionArgs<SpecialityModel>(
@@ -42,18 +39,11 @@ public class SpecialityWrappedModel : DatabaseModel<SpecialityModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             "Добавление не нуждается, данный елемент уже есть в таблице!");
     }
+    
     protected override EFTransactionArgs<SpecialityModel> TryRemoveRow(int modelIndex)
     {
         int index = 0;
-        SpecialityModel model = default;
-
-        _dbContext.Specialities.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
+        SpecialityModel model = FindByIndex(modelIndex);
 
         if (model == default)
         {
@@ -64,7 +54,7 @@ public class SpecialityWrappedModel : DatabaseModel<SpecialityModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        _dbContext.Specialities.Remove(model);
+        _container.Remove(model);
         _dbContext.SaveChanges();
 
         return new EFTransactionArgs<SpecialityModel>(
@@ -73,18 +63,11 @@ public class SpecialityWrappedModel : DatabaseModel<SpecialityModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             $"Елемент с индексом:[{modelIndex+1}] удален!");
     }
+    
     protected override EFTransactionArgs<SpecialityModel> TryUpdateRow(int modelIndex)
     {
         int index = 0;
-        SpecialityModel model = default;
-
-        _dbContext.Specialities.ForEachAsync(it =>
-        {
-            if (modelIndex == index) 
-                model = it;
-
-            index++;
-        });
+        SpecialityModel model = FindByIndex(modelIndex);
 
         if (model == default)
         {
@@ -95,10 +78,10 @@ public class SpecialityWrappedModel : DatabaseModel<SpecialityModel>
                 $"Елемента с данным индексом:[{modelIndex+1}] не существует!");
         }
 
-        Console.WriteLine("Введите название специализации...\n");
+        Console.WriteLine("Введите название специализации...");
         model.SpecialityName = Console.ReadLine();
         
-        Console.WriteLine("Введите название профиля...\n");
+        Console.WriteLine("Введите название профиля...");
         model.Profile = Console.ReadLine();
         
         _dbContext.SaveChanges();
@@ -109,19 +92,24 @@ public class SpecialityWrappedModel : DatabaseModel<SpecialityModel>
             EFTransactionReason.CONTAINS_ENTITY_OF_THIS_ELEMENT,
             $"Елемент с индексом:[{modelIndex+1}] обновлен!");
     }
+    
     protected override EFTransactionArgs<SpecialityModel> TryDisplayInfo()
     {
+        int index = 0;
         string info = "";
-        
-        _dbContext.Specialities.ForEachAsync(el =>
+
+        foreach (SpecialityModel model in _container.OrderBy(fe => fe.Id))
         {
-            info += $"SpecialityName: {el.SpecialityName} || Profile: {el.Profile}\n";
-        });
+            info += $"Index: {++index} | SpecialityName: {model.SpecialityName} || Profile: {model.Profile}.\n";
+        }
+
+        if (index != 0) 
+            Console.WriteLine(info);
 
         return new EFTransactionArgs<SpecialityModel>(
             null,
             EFTransactionType.SUCCESSFUL,
             EFTransactionReason.NONE, 
-            $"Елементы выведены успешно!");
+            index != 0 ? $"Елементы выведены успешно!" : "Тут пусто :(");
     }
 }

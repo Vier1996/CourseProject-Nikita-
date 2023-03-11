@@ -1,22 +1,18 @@
 using CourseProject.Codebase.Bootstrapper;
-using CourseProject.Codebase.Context;
 using CourseProject.Codebase.Disposable;
 using CourseProject.Codebase.Looper;
 using CourseProject.Codebase.Menu;
-using CourseProject.Codebase.MySql;
 
 namespace CourseProject.Codebase.InternalProject
 {
     public class Project
     {
-        private ProjectDbContext _projectDbContext;
-        private MySqlAgent _agent;
         private readonly BootstrapStateMachine _bootstrapStateMachine;
         private readonly Disposer _disposer;
         
         public Project()
         {
-            _bootstrapStateMachine = new BootstrapStateMachine(_projectDbContext, _agent);
+            _bootstrapStateMachine = new BootstrapStateMachine();
             _disposer = new Disposer();
 
             _bootstrapStateMachine.StatesResolved += OnBootstrapResolved;
@@ -26,19 +22,17 @@ namespace CourseProject.Codebase.InternalProject
         private void OnBootstrapResolved()
         {
             _bootstrapStateMachine.StatesResolved -= OnBootstrapResolved;
+
             Start();
         }
 
         private void Start()
         {
-            Console.WriteLine("All zaebis");
-            string inputData;
-            
             while (ProjectLooper.Instance.ProjectLoopState == ProjectLoopState.WORKING)
             {
                 CallMenu();
 
-                inputData = Console.ReadLine();
+                string? inputData = Console.ReadLine();
                 int actionIndex = Convert.ToInt32(inputData);
 
                 ApplyCallback(actionIndex);
