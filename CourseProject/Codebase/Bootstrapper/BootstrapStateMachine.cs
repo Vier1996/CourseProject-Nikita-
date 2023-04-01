@@ -5,62 +5,62 @@ using CourseProject.Codebase.StateMachine;
 
 namespace CourseProject.Codebase.Bootstrapper
 {
-    public class BootstrapStateMachine : IStateSwitcher, IDisposable
+    public class BootstrapStateMachine : IStateSwitcher, IDisposable // Класс который заводит и инициализирует сервисы
     {
-        public event Action StatesResolved;
+        public event Action StatesResolved; // Ивент, который гласит о том, что все состояния готовы к работе
         
-        private readonly List<BootstrapState> _bootstrapStates = new List<BootstrapState>();
-        private BootstrapState _currentBootstrapState = null;
+        private readonly List<BootstrapState> _bootstrapStates = new List<BootstrapState>(); // список состояний
+        private BootstrapState _currentBootstrapState = null; // текущее состояние
         
-        public BootstrapStateMachine()
+        public BootstrapStateMachine() // конструктор
         {
-            BootstrapPayload bootstrapPayload = PreparePayload();
+            BootstrapPayload bootstrapPayload = PreparePayload(); // Подготавливает полезную нагрузку
             
-            _bootstrapStates.Add(new RegisterProjectLooperState(bootstrapPayload));
-            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload));
-            _bootstrapStates.Add(new RegisterMenuServiceState(bootstrapPayload));
+            _bootstrapStates.Add(new RegisterProjectLooperState(bootstrapPayload)); // добовляет состояние регистрации ProjectLooper (зацикливателя)
+            _bootstrapStates.Add(new RegisterSqlServiceState(bootstrapPayload)); // добовляет состояние регистрации SqlService (сервиса базы данных)
+            _bootstrapStates.Add(new RegisterMenuServiceState(bootstrapPayload)); // добовляет состояние регистрации MenuService (сервиса меню)
         }
 
-        public void Resolve() => SwitchState(_bootstrapStates.First());
+        public void Resolve() => SwitchState(_bootstrapStates.First()); // меняет состояние машины на первое из списка
 
-        public void DemandNextState()
+        public void DemandNextState() // метод для запроса следующено состояния
         {
-            int stateIndex = _bootstrapStates.IndexOf(_currentBootstrapState);
+            int stateIndex = _bootstrapStates.IndexOf(_currentBootstrapState); // получение текущего индекса
 
-            if (stateIndex < _bootstrapStates.Count - 1)
+            if (stateIndex < _bootstrapStates.Count - 1) // проверка на наличее доступных состояний
             {
-                BootstrapState newState = _bootstrapStates.ElementAt(++stateIndex);
-                SwitchState(newState);
-                return;
+                BootstrapState newState = _bootstrapStates.ElementAt(++stateIndex); // присваивание нового состояния
+                SwitchState(newState); // смена состояния
+                return; // обрыв выполнения метода
             }
             
-            StatesResolved?.Invoke();
+            StatesResolved?.Invoke(); // вызов ивента о готовности всех сервисов
         }
 
-        private void SwitchState(IState state, Action onComplete = null)
+        private void SwitchState(IState state, Action onComplete = null) // метод смены состояний
         {
-            if (_currentBootstrapState == null)
+            if (_currentBootstrapState == null) // проверка состояния на то, что оно существует
             {
-                OnSuccessfulExit();
-                return;
+                OnSuccessfulExit(); // вызов анонимного метода OnSuccessfulExit
+                return; // обрыв выполнения метода
             }
             
-            _currentBootstrapState.Exit(OnSuccessfulExit);
+            _currentBootstrapState.Exit(OnSuccessfulExit); // вызов у текущего состояния метод Exit и передача калбека OnSuccessfulExit
 
-            void OnSuccessfulExit()
+            void OnSuccessfulExit() // анонимный метод OnSuccessfulExit
             {
-                _currentBootstrapState = (BootstrapState) state;
-                _currentBootstrapState.Enter(onComplete);
+                _currentBootstrapState = (BootstrapState) state; // переприсваивание текущего состояния
+                _currentBootstrapState.Enter(onComplete); // вход в текущее состояние
             }
         }
 
-        private BootstrapPayload PreparePayload() => 
+        private BootstrapPayload PreparePayload() => // подготовка полезной нагрузки
             new BootstrapPayload()
             {
-                StateDemander = this
+                StateDemander = this // инициализирует StateDemander (запрашиватель состояний)
             };
 
-        public void Dispose()
+        public void Dispose() // метод который вызывает очистку у состояний
         {
             for (int i = 0; i < _bootstrapStates.Count; i++) 
                 _bootstrapStates[i].Dispose();
