@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 
@@ -18,9 +19,9 @@ public class ProjectDbContext : DbContext
     public ProjectDbContext()
     {
         _credits.Server = "127.0.0.1";
-        _credits.Port = 57736;
+        _credits.Port = 3306;
         _credits.UserID = "root";
-        _credits.Password = "admin";
+        _credits.Password = "viprudolf";
         _credits.Database = "projectdatabase";
     }
 
@@ -42,14 +43,13 @@ public class ProjectDbContext : DbContext
 
 public class GroupModel
 {
-    public int Id { get; set; }
+    [Key] public int Id { get; set; }
     public string? Faculty { get; set; }
     public string? GroupName { get; set; }
     public int Course { get; set; }
     public int CountOfStudents { get; set; }
     public int CountOfSubGroups { get; set; }
-
-
+    
     public QualificationModel? QualificationReference { get; set; }
     public int QualificationReferenceId { get; set; }
     public FormedEducationModel? FormedEducationReference { get; set; }
@@ -62,19 +62,19 @@ public class GroupModel
 
 public class QualificationModel
 {
-    public int Id { get; set; }
+    [Key]public int Id { get; set; }
     public string? QualificationName { get; set; }
 }
 
 public class FormedEducationModel
 {
-    public int Id { get; set; }
+    [Key]public int Id { get; set; }
     public string? FormName { get; set; }
 }
 
 public class SpecialityModel
 {
-    public int Id { get; set; }
+    [Key]public int Id { get; set; }
     public string? SpecialityName { get; set; }
     public string? Profile { get; set; }
 }
