@@ -1,7 +1,7 @@
 namespace CourseProject.Codebase.StateMachine
 {
-    public interface IStateSwitcher
+    public interface IStateSwitcher // интерфейс описывающий переключателя состояния
     {
-        public void DemandNextState();
+        public void DemandNextState(); // интерфейсный методы "запрос следующего состояния"
     }
 }

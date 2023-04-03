@@ -1,8 +1,8 @@
 namespace CourseProject.Codebase.Disposable
 {
     [Dispose]
-    public interface IDispose
+    public interface IDispose // интерфейс [IDispose]
     {
-        public void Dispose();
+        public void Dispose(); // интерфейсный метод очистки
     }
 }

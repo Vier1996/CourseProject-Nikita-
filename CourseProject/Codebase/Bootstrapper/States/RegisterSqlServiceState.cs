@@ -3,33 +3,32 @@ using CourseProject.Codebase.MySql;
 
 namespace CourseProject.Codebase.Bootstrapper.States
 {
-    public class RegisterSqlServiceState : BootstrapState, IDisposable
+    public class RegisterSqlServiceState : BootstrapState, IDisposable // состояние регистрации службы "SQL"
     {
-        public RegisterSqlServiceState(BootstrapPayload payload) : base(payload) { }
+        public RegisterSqlServiceState(BootstrapPayload payload) : base(payload) { } // коструктор класса
         
-        public override void Enter(Action onComplete)
+        public override void Enter(Action onComplete) // метод входа в состояние
         {
-            RegisterEntityFramework();
+            RegisterEntityFramework(); // вызов метода регистрации Entity framework
+            onComplete?.Invoke(); // вызов события "выполнено"
+        }
+
+        private void RegisterEntityFramework() // метод регистрации Entity framework
+        {
+            _payload.ProjectDbContext = new ProjectDbContext(); // создание экземпляра контекста базы данных
+            _payload.MySqlAgent = new MySqlAgent(_payload.ProjectDbContext);  // создание экземпляра агента
             
-            onComplete?.Invoke();
+            OnEntityFrameworkStarted(); // вызов метода который вызывается когда Entity Framework готов
         }
 
-        private void RegisterEntityFramework()
+        private void OnEntityFrameworkStarted() // метод который вызывается когда Entity Framework готов
         {
-            _payload.ProjectDbContext = new ProjectDbContext();
-            _payload.MySqlAgent = new MySqlAgent(_payload.ProjectDbContext);
-            
-            OnEntityFrameworkStarted();
+            _payload.StateDemander.DemandNextState(); // запрос след состояния у бутстрапера
         }
 
-        private void OnEntityFrameworkStarted()
-        {
-            _payload.StateDemander.DemandNextState();
-        }
+        public override void Exit(Action onComplete) => onComplete?.Invoke(); // методы выхода из состояния
 
-        public override void Exit(Action onComplete) => onComplete?.Invoke();
-
-        public override void Dispose() => 
+        public override void Dispose() => // метод очистки состояния
             _payload.ProjectDbContext.SaveChanges();
     }
 }

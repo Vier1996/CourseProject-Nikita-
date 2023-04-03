@@ -62,8 +62,8 @@ namespace CourseProject.Codebase.Bootstrapper
 
         public void Dispose() // метод который вызывает очистку у состояний
         {
-            for (int i = 0; i < _bootstrapStates.Count; i++) 
-                _bootstrapStates[i].Dispose();
+            for (int i = 0; i < _bootstrapStates.Count; i++) // проходим по состояниям бутстраппера
+                _bootstrapStates[i].Dispose(); // очищаем состояние бутстраппера
         }
     }
 }

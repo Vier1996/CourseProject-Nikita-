@@ -4,43 +4,43 @@ using MySqlConnector;
 
 namespace CourseProject.Codebase.Context;
 
-public class ProjectDbContext : DbContext
+public class ProjectDbContext : DbContext // класс "контекст базы данных"
 {
-    private readonly MySqlConnectionStringBuilder _credits = new MySqlConnectionStringBuilder();
+    private readonly MySqlConnectionStringBuilder _credits = new MySqlConnectionStringBuilder(); // собиратель строки соединения
 
-    public DbSet<GroupModel> Groups { get; set; }
-    public DbSet<QualificationModel> Qualifications { get; set; }
-    public DbSet<FormedEducationModel> FormedEducations { get; set; }
-    public DbSet<SpecialityModel> Specialities { get; set; }
+    public DbSet<GroupModel> Groups { get; set; } // коллекция моделей "Группа"
+    public DbSet<QualificationModel> Qualifications { get; set; } // коллекция моделей "Квалификация"
+    public DbSet<FormedEducationModel> FormedEducations { get; set; } // коллекция моделей "Форма обучения"
+    public DbSet<SpecialityModel> Specialities { get; set; } // коллекция моделей "Специализация"
 
-    private Action _onComplete = null;
+    private Action _onComplete = null; // обратный вызов "выполнено"
     
-    public ProjectDbContext()
+    public ProjectDbContext() // конструктор класса
     {
-        _credits.Server = "127.0.0.1";
-        _credits.Port = 57736;
-        _credits.UserID = "root";
-        _credits.Password = "admin";
-        _credits.Database = "projectdatabase";
+        _credits.Server = "127.0.0.1"; // локальный айпи
+        _credits.Port = 57736; // локальный порт
+        _credits.UserID = "root"; // имя пользователя
+        _credits.Password = "admin"; // пороль
+        _credits.Database = "projectdatabase"; // название базы данных
     }
 
-    public ProjectDbContext OnInitializationComplete(Action onComplete)
+    public ProjectDbContext OnInitializationComplete(Action onComplete) // методы "Инициализация выполнена"
     {
-        _onComplete = onComplete;
-        return this;
+        _onComplete = onComplete; // присваивание обратного вызова
+        return this; // возвращение своего собственного экземпляра
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) // метод "Настройка"
     {
-        if (!optionsBuilder.IsConfigured)
+        if (!optionsBuilder.IsConfigured) // проверка "наастроен ли Entity framework с MySql"
         {
-            DbConnection connection = new MySqlConnection(_credits.ToString());
-            optionsBuilder.UseMySql(connection, ServerVersion.AutoDetect(_credits.ToString()));
+            DbConnection connection = new MySqlConnection(_credits.ToString()); // создание соеденительной строки
+            optionsBuilder.UseMySql(connection, ServerVersion.AutoDetect(_credits.ToString())); // указываем Entity Framework использовать MySql
         }
     }
 }
 
-public class GroupModel
+public class GroupModel // модель группы
 {
     public int Id { get; set; }
     public string? Faculty { get; set; }
@@ -60,19 +60,19 @@ public class GroupModel
 
 }
 
-public class QualificationModel
+public class QualificationModel // модель квалификации
 {
     public int Id { get; set; }
     public string? QualificationName { get; set; }
 }
 
-public class FormedEducationModel
+public class FormedEducationModel // модель формы обучения
 {
     public int Id { get; set; }
     public string? FormName { get; set; }
 }
 
-public class SpecialityModel
+public class SpecialityModel // модель специализации
 {
     public int Id { get; set; }
     public string? SpecialityName { get; set; }

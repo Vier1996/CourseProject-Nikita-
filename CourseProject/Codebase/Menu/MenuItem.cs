@@ -1,20 +1,20 @@
 namespace CourseProject.Codebase.Menu
 {
-    public class MenuItem
+    public class MenuItem // класс представляющий элемент менюхи
     {
-        private int _index = -1;
-        private string _name = "";
-        private Action _callback = null;
+        private int _index = -1; // индекс меню
+        private string _name = ""; // название меню
+        private Action _callback = null; // обратный вызов (действие)
 
-        public MenuItem(int index, string name, Action callback)
+        public MenuItem(int index, string name, Action callback) // конструктор класса
         {
-            _index = index;
-            _name = name;
-            _callback = callback;
+            _index = index; // присваивание индекса
+            _name = name; // присваивание названия
+            _callback = callback; // присваивание дествия
         }
 
-        public int GetIndex() => _index;
-        public string GetName() => _name;
-        public Action GetCallback() => _callback;
+        public int GetIndex() => _index; // получение индекса
+        public string GetName() => _name; // получение названия
+        public Action GetCallback() => _callback; // получения дествия
     }
 }

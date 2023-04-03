@@ -1,9 +1,9 @@
 namespace CourseProject.Codebase.Looper
 {
-    public enum ProjectLoopState
+    public enum ProjectLoopState // перечисление "статус зацикливателя"
     {
         NONE,
-        WORKING, 
-        STOPED
+        WORKING, // работает
+        STOPED // остановлен
     }
 }
